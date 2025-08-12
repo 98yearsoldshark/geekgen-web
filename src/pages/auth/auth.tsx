@@ -45,15 +45,25 @@ export default function Auth() {
 			toast.error('两次输入密码不同');
 			return;
 		}
+		    // --- 新增的映射逻辑 ---
+		// 1. 将 role 的数字值 (0, 1) 映射到后端需要的字符串 ("student", "teacher")
+		const roleToSend = userData.role === 0 ? "student" : "teacher";
+
+		// 2. 将 level 的数字值 (0, 1) 映射到后端需要的字符串 ("四级", "六级")
+		const levelToSend = userData.level === 0 ? "四级" : "六级";
+		// ----------------------
+
+		// 构建发送到后端的数据
 		const userSignUpData = {
 			username: userData.username,
 			password: userData.password,
-			level: userData.level + 4,
-			role: userData.role,
+			level: levelToSend,     // 使用映射后的 level 字符串
+			role: roleToSend,       // 使用映射后的 role 字符串
 			school: userData.school,
 			name: userData.name
-		} as UserSignUpData;
+		};
 
+		// 这里我们不再需要 as UserSignUpData 类型断言，或者需要去修改它的定义
 		signup(userSignUpData).then(response => {
 			sessionStorage.setItem('login', 'true');
 			localStorage.setItem('user:role', String(response.role));
@@ -65,6 +75,26 @@ export default function Auth() {
 		}).catch((error: Error) => {
 			toast.error(`注册失败: ${error.message}`);
 		});
+		// const userSignUpData = {
+		// 	username: userData.username,
+		// 	password: userData.password,
+		// 	level: userData.level + 4,
+		// 	role: userData.role,
+		// 	school: userData.school,
+		// 	name: userData.name
+		// } as UserSignUpData;
+
+		// signup(userSignUpData).then(response => {
+		// 	sessionStorage.setItem('login', 'true');
+		// 	localStorage.setItem('user:role', String(response.role));
+		// 	localStorage.setItem('token', response.token);
+		// 	localStorage.setItem('tokenCreateTime', String(new Date().getTime()));
+		// 	toast.info('注册成功');
+		// 	setUserData(initUserData);
+		// 	navigate('/');
+		// }).catch((error: Error) => {
+		// 	toast.error(`注册失败: ${error.message}`);
+		// });
 	}
 
 	const pageTabs = {

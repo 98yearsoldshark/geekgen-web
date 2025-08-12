@@ -1,8 +1,8 @@
 export interface UserSignUpData {
   username: string;
   password: string;
-  level: number;
-  role: number;
+  level: string;
+  role: string;
   school: string;
 }
 
